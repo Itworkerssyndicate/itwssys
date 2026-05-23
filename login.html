@@ -199,7 +199,7 @@
         
         /* الحاوية الرئيسية */
         .login-container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 60px auto;
             position: relative;
             z-index: 10;
@@ -309,44 +309,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* تبويبات تسجيل الدخول */
-        .login-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px;
-            border-radius: 50px;
-        }
-        
-        .login-tab {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 40px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .login-tab.active {
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            color: white;
-            box-shadow: 0 0 20px var(--neon-cyan);
-        }
-        
-        .login-tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-        
         /* حقول الإدخال */
         .input-group {
             margin-bottom: 25px;
@@ -433,28 +395,6 @@
             box-shadow: 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-purple);
         }
         
-        /* معلومات إضافية */
-        .login-info {
-            text-align: center;
-            margin-top: 25px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-        }
-        
-        /* تذييل */
-        .login-footer {
-            text-align: center;
-            margin-top: 40px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 14px;
-        }
-        
-        .version {
-            font-family: 'Orbitron', monospace;
-            color: var(--neon-cyan);
-            margin-top: 10px;
-        }
-        
         /* شريط التقدم */
         .progress-bar {
             width: 100%;
@@ -510,6 +450,20 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* تذييل */
+        .login-footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+        }
+        
+        .version {
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+            margin-top: 10px;
+        }
+        
         @media (max-width: 768px) {
             .login-container {
                 margin: 30px auto;
@@ -524,10 +478,6 @@
             .login-logo-wrapper {
                 width: 100px;
                 height: 100px;
-            }
-            .login-tab {
-                padding: 8px;
-                font-size: 14px;
             }
         }
         
@@ -557,35 +507,15 @@
         
         <!-- كارت تسجيل الدخول -->
         <div class="login-card">
-            <!-- تبويبات تسجيل الدخول -->
-            <div class="login-tabs">
-                <button class="login-tab active" onclick="switchTab('credentials')">
-                    <i class="fas fa-user"></i> بيانات الاعتماد
-                </button>
-                <button class="login-tab" onclick="switchTab('phone')">
-                    <i class="fas fa-phone-alt"></i> رقم الهاتف
-                </button>
+            <!-- نموذج تسجيل الدخول -->
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> اسم المستخدم</label>
+                <input type="text" id="username" class="neon-input" placeholder="أدخل اسم المستخدم" onkeydown="handleLoginKeyDown(event)">
             </div>
             
-            <!-- نموذج بيانات الاعتماد -->
-            <div id="credentialsTab">
-                <div class="input-group">
-                    <label><i class="fas fa-user"></i> اسم المستخدم</label>
-                    <input type="text" id="credUsername" class="neon-input" placeholder="أدخل اسم المستخدم" onkeydown="handleLoginKeyDown(event, 'cred')">
-                </div>
-                
-                <div class="input-group">
-                    <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                    <input type="password" id="credPassword" class="neon-input" placeholder="أدخل كلمة المرور" onkeydown="handleLoginKeyDown(event, 'cred')">
-                </div>
-            </div>
-            
-            <!-- نموذج رقم الهاتف -->
-            <div id="phoneTab" style="display: none;">
-                <div class="input-group">
-                    <label><i class="fas fa-phone-alt"></i> رقم الهاتف</label>
-                    <input type="tel" id="phoneNumber" class="neon-input" placeholder="01xxxxxxxxx" onkeydown="handleLoginKeyDown(event, 'phone')">
-                </div>
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> كلمة المرور</label>
+                <input type="password" id="password" class="neon-input" placeholder="أدخل كلمة المرور" onkeydown="handleLoginKeyDown(event)">
             </div>
             
             <!-- شريط التقدم -->
@@ -640,7 +570,6 @@
         // =====================================================================
         // المتغيرات العامة
         // =====================================================================
-        let currentTab = 'credentials';
         let loginAttempts = 0;
         let lastLoginAttempt = 0;
         
@@ -671,27 +600,7 @@
             progressFill.style.width = percent + '%';
         }
         
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            const credentialsTab = document.getElementById('credentialsTab');
-            const phoneTab = document.getElementById('phoneTab');
-            const tabs = document.querySelectorAll('.login-tab');
-            
-            if (tab === 'credentials') {
-                credentialsTab.style.display = 'block';
-                phoneTab.style.display = 'none';
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                credentialsTab.style.display = 'none';
-                phoneTab.style.display = 'block';
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
-            }
-        }
-        
-        function handleLoginKeyDown(event, type) {
+        function handleLoginKeyDown(event) {
             if (event.key === 'Enter') {
                 handleLogin();
             }
@@ -792,7 +701,7 @@
         }
         
         // =====================================================================
-        // تسجيل الدخول (100% من قاعدة البيانات - بدون أي بيانات وهمية)
+        // تسجيل الدخول (اسم المستخدم + كلمة المرور فقط)
         // =====================================================================
         async function handleLogin() {
             // منع الهجمات المتكررة
@@ -805,45 +714,29 @@
             lastLoginAttempt = now;
             loginAttempts++;
             
-            let username, password;
+            const username = document.getElementById('username')?.value.trim();
+            const password = document.getElementById('password')?.value.trim();
             
-            if (currentTab === 'credentials') {
-                username = document.getElementById('credUsername')?.value.trim();
-                password = document.getElementById('credPassword')?.value.trim();
-                
-                if (!username || !password) {
-                    showMessage('error', 'الرجاء إدخال اسم المستخدم وكلمة المرور');
-                    return;
-                }
-            } else {
-                const phone = document.getElementById('phoneNumber')?.value.trim();
-                if (!phone) {
-                    showMessage('error', 'الرجاء إدخال رقم الهاتف');
-                    return;
-                }
-                username = phone;
-                password = phone;
+            if (!username || !password) {
+                showMessage('error', 'الرجاء إدخال اسم المستخدم وكلمة المرور');
+                return;
             }
             
             showProgress(true);
             updateProgress(20);
             
             try {
-                // البحث عن المستخدم في قاعدة البيانات فقط
-                let query;
-                if (currentTab === 'credentials') {
-                    query = db.collection('Users').where('username', '==', username).where('isActive', '==', true);
-                } else {
-                    query = db.collection('Users').where('phone', '==', username).where('isActive', '==', true);
-                }
-                
-                const userSnapshot = await query.get();
+                // البحث عن المستخدم في قاعدة البيانات
+                const userSnapshot = await db.collection('Users')
+                    .where('username', '==', username)
+                    .where('isActive', '==', true)
+                    .get();
                 
                 updateProgress(60);
                 
                 if (userSnapshot.empty) {
                     showProgress(false);
-                    showMessage('error', 'اسم المستخدم أو رقم الهاتف غير صحيح');
+                    showMessage('error', 'اسم المستخدم غير صحيح');
                     return;
                 }
                 
@@ -852,23 +745,16 @@
                 
                 updateProgress(75);
                 
-                // التحقق من كلمة المرور باستخدام bcrypt فقط (من قاعدة البيانات)
+                // التحقق من كلمة المرور باستخدام bcrypt
                 let isValid = false;
                 
-                if (currentTab === 'credentials') {
-                    // استخدام bcrypt للمقارنة مع كلمة المرور المخزنة في قاعدة البيانات
-                    if (userData.password) {
-                        if (typeof bcrypt !== 'undefined' && userData.password.startsWith('$2')) {
-                            isValid = await bcrypt.compare(password, userData.password);
-                        } else {
-                            // إذا كانت كلمة المرور غير مشفرة (للتوافق مع الإصدارات القديمة)
-                            // في الإنتاج، كل كلمات المرور يجب أن تكون مشفرة بـ bcrypt
-                            isValid = (userData.password === password);
-                        }
+                if (userData.password) {
+                    if (typeof bcrypt !== 'undefined' && userData.password.startsWith('$2')) {
+                        isValid = await bcrypt.compare(password, userData.password);
+                    } else {
+                        // للتوافق مع الإصدارات القديمة (كلمات مرور غير مشفرة)
+                        isValid = (userData.password === password);
                     }
-                } else {
-                    // التحقق من رقم الهاتف
-                    isValid = (userData.phone === password);
                 }
                 
                 updateProgress(90);
@@ -913,7 +799,7 @@
                 
                 showProgress(false);
                 
-                // إظهار رسالة نجاح والانتقال حسب الصلاحية
+                // إظهار رسالة نجاح
                 Swal.fire({
                     icon: 'success',
                     title: 'مرحباً بك',
@@ -957,14 +843,8 @@
         // =====================================================================
         // دوال عامة
         // =====================================================================
-        window.switchTab = switchTab;
         window.handleLogin = handleLogin;
         window.handleLoginKeyDown = handleLoginKeyDown;
-        
-        // منع الكتابة بالعربي في رقم الهاتف
-        document.getElementById('phoneNumber')?.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
     </script>
 </body>
 </html>
